@@ -26,8 +26,10 @@ namespace GrpcClient
             {
                 Name = "GrpcClient"
             });
-            
             Console.WriteLine("Greeting: " + reply.Message);
+            
+            var secondReply = client.SayHelloAgain(new HelloRequest { Name = "Jennifer Lopez "});
+            Console.WriteLine("Greeting: " + secondReply.Message);
             
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();

@@ -20,5 +20,10 @@ namespace GrpcGreeter
                 Message = "Hello " + request.Name
             });
         }
+
+        public override Task<HelloReply> SayHelloAgain(HelloRequest request, ServerCallContext context)
+        {
+            return Task.FromResult(new HelloReply {Message = "Hello again " + request.Name});
+        }
     }
 }
