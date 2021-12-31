@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Routeguide;
@@ -12,7 +15,7 @@ namespace GrpcGreeter
     /// </summary>
     public class RouteGuideImpl : RouterGuide.RouterGuideBase
     {
-        readonly List<Feature> _features;
+        private readonly List<Feature> _features;
         
         public RouteGuideImpl(List<Feature> features)
         {
@@ -22,6 +25,17 @@ namespace GrpcGreeter
         public override Task<Feature> GetFeature(Point request, ServerCallContext context)
         {
             return Task.FromResult(CheckFeature(request));
+        }
+
+        public override async Task ListFeatures(Rectangle request, IServerStreamWriter<Feature> responseStream, 
+            ServerCallContext context)
+        {
+            var responses = _features.FindAll(feature => feature.Exists() &&
+                                                         request.Contains(feature.Location));
+            foreach (var response in responses)
+            {
+                await responseStream.WriteAsync(response);
+            }
         }
 
         private Feature CheckFeature(Point location)
