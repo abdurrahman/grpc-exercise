@@ -8,6 +8,9 @@
     <Protobuf Include="..\protos\greet.proto" GrpcServices="Server">
       <Link>Protos\greet.proto</Link>
     </Protobuf>
+    <Protobuf Include="..\protos\router.proto" GrpcServices="Server">
+      <Link>Protos\greet.proto</Link>
+    </Protobuf>
   </ItemGroup>
 
   <ItemGroup>
