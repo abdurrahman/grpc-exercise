@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Routeguide;
@@ -22,31 +18,24 @@ namespace GrpcGreeter
             _features = features;
         }
 
+        /// <summary>
+        /// Gets the feature at the requested point. If no feature at that location
+        /// exists, an unnammed feature is returned at the provided location.
+        /// </summary>
         public override Task<Feature> GetFeature(Point request, ServerCallContext context)
         {
             return Task.FromResult(CheckFeature(request));
         }
 
-        public override async Task ListFeatures(Rectangle request, IServerStreamWriter<Feature> responseStream, 
-            ServerCallContext context)
-        {
-            var responses = _features.FindAll(feature => feature.Exists() &&
-                                                         request.Contains(feature.Location));
-            foreach (var response in responses)
-            {
-                await responseStream.WriteAsync(response);
-            }
-        }
-
+        /// <summary>
+        /// Gets the feature at the given point.
+        /// </summary>
+        /// <param name="location">the location to check</param>
+        /// <returns>The feature object at the point Note that an empty name indicates no feature.</returns>
         private Feature CheckFeature(Point location)
         {
             var result = _features.FirstOrDefault((feature) => feature.Location.Equals(location));
-            if (result is null)
-            {
-                return new Feature {Name = string.Empty, Location = location};
-            }
-
-            return result;
+            return result ?? new Feature {Name = string.Empty, Location = location};
         }
     }
 }

@@ -19,7 +19,7 @@ service RouterGuide {
 
     // Accepts a stream of RouteNotes sent while a route is being traversed,
     // while receiving other RouteNotes (e.g. from other users)
-    rpc RouteChate(stream RouteNote) returns (stream RouteNote) {}
+    rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}
 }
 
 message Point {
@@ -45,7 +45,7 @@ message Feature {
 
 message RouteNote {
     // The location from which the message is sent.
-    Point locataion = 1;
+    Point location = 1;
     
     // The message to be sent.
     string message = 2;
@@ -63,5 +63,4 @@ message RouteSummary {
 
     // The duration of the traversal in seconds.
     int32 elapsed_time = 4;
-
 }
