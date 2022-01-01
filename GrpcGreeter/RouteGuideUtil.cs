@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using Newtonsoft.Json;
 using Routeguide;
 
 namespace GrpcGreeter
@@ -39,7 +43,59 @@ namespace GrpcGreeter
         /// </summary>
         public static bool Contains(this Rectangle rectangle, Point point)
         {
-            throw new NotImplementedException();
+            var left = Math.Min(rectangle.Lo.Longitude, rectangle.Hi.Longitude);
+            var right = Math.Max(rectangle.Lo.Longitude, rectangle.Hi.Longitude);
+            var top = Math.Max(rectangle.Lo.Latitude, rectangle.Hi.Latitude);
+            var bottom = Math.Min(rectangle.Lo.Latitude, rectangle.Hi.Latitude);
+
+            return point.Longitude >= left && point.Longitude <= right && point.Latitude >= bottom &&
+                   point.Latitude <= top;
         }
+
+        public static List<Feature> LoadFeatures()
+        {
+            var features = new List<Feature>();
+            var jsonFeatures = JsonConvert.DeserializeObject<List<JsonFeature>>(ReadFeaturesFromResources());
+
+            foreach (var jsonFeature in jsonFeatures)
+            {
+                features.Add(new Feature
+                {
+                    Name = jsonFeature.name,
+                    Location = new Point 
+                    { 
+                        Longitude = jsonFeature.location.longitude, 
+                        Latitude = jsonFeature.location.latitude
+                    }
+                });
+            }
+            return features;
+        }
+
+        private static string ReadFeaturesFromResources()
+        {
+            var stream = typeof(RouteGuideUtil).GetTypeInfo().Assembly
+                .GetManifestResourceStream(DefaultFeaturesResourceName);
+            if (stream is null)
+            {
+                throw new IOException(string.Format("Error loading the embedded resource \"{0}\""));
+            }
+            using var streamReader = new StreamReader(stream);
+            return streamReader.ReadToEnd();
+        }
+
+#pragma warning disable 0649 // Suppresses "Field 'x' is never assigned to".
+        private class JsonFeature
+        {
+            public string name;
+            public JsonLocation location;
+        }
+
+        private class JsonLocation
+        {
+            public int longitude;
+            public int latitude;
+        }
+#pragma warning restore 0649
     }
 }
