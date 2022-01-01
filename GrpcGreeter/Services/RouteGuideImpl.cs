@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
+using Microsoft.AspNetCore.Routing;
 using Routeguide;
 
 namespace GrpcGreeter
@@ -12,7 +15,8 @@ namespace GrpcGreeter
     public class RouteGuideImpl : RouterGuide.RouterGuideBase
     {
         private readonly List<Feature> _features;
-        
+        private readonly object _myLock = new object();
+        private readonly Dictionary<Point, List<RouteNote>> routeNotes = new Dictionary<Point, List<RouteNote>>();
         public RouteGuideImpl(List<Feature> features)
         {
             _features = features;
@@ -25,6 +29,90 @@ namespace GrpcGreeter
         public override Task<Feature> GetFeature(Point request, ServerCallContext context)
         {
             return Task.FromResult(CheckFeature(request));
+        }
+
+        public override async Task ListFeatures(Rectangle request, IServerStreamWriter<Feature> responseStream, 
+            ServerCallContext context)
+        {
+            var responses = _features.FindAll(feature => feature.Exists() && 
+                                                         request.Contains(feature.Location));
+            foreach (var response in responses)
+            {
+                await responseStream.WriteAsync(response);
+            }
+        }
+
+        /// <summary>
+        /// Gets a stream of points, and responds with statistics about the "trip": number of points,
+        /// number of known features visited, total distance traveled, and total time spent.
+        /// </summary>
+        public override async Task<RouteSummary> RecordRoute(IAsyncStreamReader<Point> requestStream, 
+            ServerCallContext context)
+        {
+            int pointCount = 0;
+            int featureCount = 0;
+            int distance = 0;
+            Point previous = null;
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            while (await requestStream.MoveNext())
+            {
+                var point = requestStream.Current;
+                pointCount++;
+                if (CheckFeature(point).Exists())
+                    featureCount++;
+
+                if (previous != null)
+                {
+                    distance += (int) previous.GetDistance(point);
+                }
+
+                previous = point;
+
+            }
+            stopWatch.Stop();
+
+            return new RouteSummary
+            {
+                PointCount = pointCount,
+                FeatureCount = featureCount,
+                Distance = distance,
+                ElapsedTime = (int) (stopWatch.ElapsedMilliseconds / 1000)
+            };
+        }
+
+        /// <summary>
+        /// Receives a stream of message/location pairs, and responds with a stream of all previous
+        /// messages at each of those locations.
+        /// </summary>
+        public override async Task RouteChat(IAsyncStreamReader<RouteNote> requestStream, 
+            IServerStreamWriter<RouteNote> responseStream, ServerCallContext context)
+        {
+            while (await requestStream.MoveNext())
+            {
+                var note = requestStream.Current;
+                var prevNotes = AddNoteForLocation(note.Location, note);
+                foreach (var prevNote in prevNotes)
+                {
+                    await responseStream.WriteAsync(prevNote);
+                }
+            }
+        }
+
+        private List<RouteNote> AddNoteForLocation(Point location, RouteNote note)
+        {
+            lock (_myLock)
+            {
+                if (!routeNotes.TryGetValue(location, out var notes))
+                {   
+                    routeNotes.Add(location, notes);
+                }
+
+                var existingNotes = new List<RouteNote>(notes);
+                notes.Add(note);
+                return existingNotes;
+            }
         }
 
         /// <summary>
