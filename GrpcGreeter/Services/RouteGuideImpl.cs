@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
-using Microsoft.AspNetCore.Routing;
 using Routeguide;
 
 namespace GrpcGreeter
@@ -15,8 +13,8 @@ namespace GrpcGreeter
     public class RouteGuideImpl : RouterGuide.RouterGuideBase
     {
         private readonly List<Feature> _features;
-        private readonly object _myLock = new object();
-        private readonly Dictionary<Point, List<RouteNote>> routeNotes = new Dictionary<Point, List<RouteNote>>();
+        private readonly object _lock = new();
+        private readonly Dictionary<Point, List<RouteNote>> _routeNotes = new Dictionary<Point, List<RouteNote>>();
         public RouteGuideImpl(List<Feature> features)
         {
             _features = features;
@@ -31,6 +29,9 @@ namespace GrpcGreeter
             return Task.FromResult(CheckFeature(request));
         }
 
+        /// <summary>
+        /// Gets all features contained within the given bounding rectangle.
+        /// </summary>
         public override async Task ListFeatures(Rectangle request, IServerStreamWriter<Feature> responseStream, 
             ServerCallContext context)
         {
@@ -99,17 +100,20 @@ namespace GrpcGreeter
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Adds a note for location and returns a list of pre-existing notes for that location (not containing the newly added note).
+        /// </summary>
         private List<RouteNote> AddNoteForLocation(Point location, RouteNote note)
         {
-            lock (_myLock)
+            lock (_lock)
             {
-                if (!routeNotes.TryGetValue(location, out var notes))
+                if (!_routeNotes.TryGetValue(location, out var notes))
                 {   
-                    routeNotes.Add(location, notes);
+                    _routeNotes.Add(location, notes);
                 }
 
-                var existingNotes = new List<RouteNote>(notes);
+                var existingNotes = new List<RouteNote>(notes!);
                 notes.Add(note);
                 return existingNotes;
             }
