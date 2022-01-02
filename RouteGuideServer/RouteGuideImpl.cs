@@ -3,14 +3,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
-using Routeguide;
 
-namespace GrpcGreeter
+namespace Routeguide
 {
     /// <summary>
     /// Example implementation of RouteGuide server.
     /// </summary>
-    public class RouteGuideImpl : RouterGuide.RouterGuideBase
+    public class RouteGuideImpl : RouteGuide.RouteGuideBase
     {
         private readonly List<Feature> _features;
         private readonly object _lock = new();
