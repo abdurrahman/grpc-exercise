@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
-using Routeguide;
 
-namespace GrpcGreeter
+namespace Routeguide
 {
     /// <summary>
     /// Utility methods for the route guide example.
     /// </summary>
     public static class RouteGuideUtil
     {
-        private const string DefaultFeaturesResourceName = "route_guide_db.json";
+        private const string DefaultFeaturesResourceName = "RouteGuide.route_guide_db.json";
         private const double CoordFactor = 1e7;
 
         public static bool Exists(this Feature feature)
@@ -35,7 +34,19 @@ namespace GrpcGreeter
         /// <returns>the distance between the points in meters</returns>
         public static double GetDistance(this Point start, Point end)
         {
-            throw new NotImplementedException();
+            const int radius = 6371000; // earth radius in metres
+            var startLatitude = ToRadians(start.GetLatitude());
+            var endLatitude = ToRadians(end.GetLatitude());
+            var startLongitude = ToRadians(start.GetLongitude());
+            var endLongitude = ToRadians(end.GetLongitude());
+
+            var deltaLatitude = endLatitude - startLatitude;
+            var deltaLongitude = endLongitude - startLongitude;
+
+            double a = Math.Sin(deltaLatitude / 2) * Math.Sin(deltaLatitude / 2) + Math.Cos(startLatitude) *
+                Math.Cos(endLatitude) * Math.Sin(deltaLongitude / 2) * Math.Sin(deltaLongitude / 2);
+            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            return radius * c;
         }
 
         /// <summary>
@@ -51,6 +62,9 @@ namespace GrpcGreeter
             return point.Longitude >= left && point.Longitude <= right && point.Latitude >= bottom &&
                    point.Latitude <= top;
         }
+
+        private static double ToRadians(double val)
+            => (Math.PI / 180) * val;
 
         public static List<Feature> LoadFeatures()
         {
