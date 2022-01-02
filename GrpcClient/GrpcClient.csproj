@@ -20,4 +20,8 @@
         </Protobuf>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\RouteGuide\RouteGuide.csproj" />
+    </ItemGroup>
+
 </Project>

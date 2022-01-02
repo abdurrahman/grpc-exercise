@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net.Http;
-using System.Threading.Tasks;
+using Grpc.Core;
 using Grpc.Net.Client;
-using GrpcGreeter;
+using Routeguide;
 
 namespace GrpcClient
 {
@@ -10,8 +10,8 @@ namespace GrpcClient
     {
         private const string GrpcServerUrl = "https://localhost:5001";
         
-        static async Task Main(string[] args)
-        {
+        static void Main(string[] args)
+        {           
             // Return `true` to allow certificates that are untrusted/invalid
             var httpHandler = new HttpClientHandler
             {
@@ -19,18 +19,33 @@ namespace GrpcClient
                     HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
 
-            using var channel = GrpcChannel.ForAddress(GrpcServerUrl, new GrpcChannelOptions{ HttpHandler = httpHandler});
-            var client = new Greeter.GreeterClient(channel);
+            #region Greetings
+            
+            // using var channel = GrpcChannel.ForAddress(GrpcServerUrl, new GrpcChannelOptions{ HttpHandler = httpHandler});
+            // var client = new Greeter.GreeterClient(channel);
+            //
+            // var reply =  await client.SayHelloAsync(new HelloRequest
+            // {
+            //     Name = "GrpcClient"
+            // });
+            // Console.WriteLine("Greeting: " + reply.Message);
+            //
+            // var secondReply = client.SayHelloAgain(new HelloRequest { Name = "Jennifer Lopez "});
+            // Console.WriteLine("Greeting: " + secondReply.Message);
+            //
+            // Console.WriteLine("Press any key to exit...");
+            // Console.ReadKey();
 
-            var reply =  await client.SayHelloAsync(new HelloRequest
-            {
-                Name = "GrpcClient"
-            });
-            Console.WriteLine("Greeting: " + reply.Message);
+            #endregion
+
+            // using var channel = GrpcChannel.ForAddress(GrpcServerUrl, new GrpcChannelOptions{ HttpHandler = httpHandler});
+            var channel = new Channel("127.0.0.1:30052", ChannelCredentials.Insecure);
+            var client = new RouteGuideClient(new RouteGuide.RouteGuideClient(channel));
             
-            var secondReply = client.SayHelloAgain(new HelloRequest { Name = "Jennifer Lopez "});
-            Console.WriteLine("Greeting: " + secondReply.Message);
-            
+            // Looking for a valid feature
+            client.GetFeature(409146138, -746188906);
+
+            channel.ShutdownAsync().Wait();
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
