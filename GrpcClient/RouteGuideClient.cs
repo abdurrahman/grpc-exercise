@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Grpc.Core;
@@ -12,7 +13,7 @@ namespace GrpcClient
     public class RouteGuideClient
     {
         private readonly RouteGuide.RouteGuideClient _client;
-        
+
         public RouteGuideClient(RouteGuide.RouteGuideClient client)
         {
             _client = client;
@@ -26,8 +27,8 @@ namespace GrpcClient
             try
             {
                 Log("*** GetFeature: lat={0} lon={1}", lat, lon);
-                
-                var request = new Point { Latitude = lat, Longitude = lon };
+
+                var request = new Point {Latitude = lat, Longitude = lon};
                 var feature = _client.GetFeature(request);
                 if (feature.Exists())
                 {
@@ -46,7 +47,7 @@ namespace GrpcClient
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Server-streaming example. Calls listFeatures with a rectangle of interest. Prints each response feature as it arrives.
         /// </summary>
@@ -58,8 +59,8 @@ namespace GrpcClient
                     hiLon);
                 var request = new Rectangle
                 {
-                    Lo = new Point { Latitude = lowLat, Longitude = lowLon },
-                    Hi = new Point { Latitude = hiLat, Longitude = hiLon }
+                    Lo = new Point {Latitude = lowLat, Longitude = lowLon},
+                    Hi = new Point {Latitude = hiLat, Longitude = hiLon}
                 };
 
                 using var call = _client.ListFeatures(request);
@@ -71,15 +72,58 @@ namespace GrpcClient
                     var feature = responseStream.Current;
                     responseLog.Append(feature);
                 }
+
                 Log(responseLog.ToString());
             }
             catch (RpcException ex)
             {
-                Log("RPC failed " + ex); 
+                Log("RPC failed " + ex);
                 throw;
             }
         }
 
+        /// <summary>
+        /// Client-streaming example. Sends numPoints randomly chosen points from features 
+        /// with a variable delay in between. Prints the statistics when they are sent from the server.
+        /// </summary>
+        public async Task RecordRoute(List<Feature> features, int numPoints)
+        {
+            try
+            {
+                Log("*** RecordRoute");
+                using (var call = _client.RecordRoute())
+                {
+                    // Send numPoints points randomly selected from the features list.
+                    var numMsg = new StringBuilder();
+                    var random = new Random();
+                    for (int i = 0; i < numPoints; i++)
+                    {
+                        var index = random.Next(features.Count);
+                        var point = features[index].Location;
+                        Log("Visiting point {0}, {1}", point.GetLatitude(), point.GetLongitude());
+
+                        await call.RequestStream.WriteAsync(point);
+                        
+                        // A bit of delay before sending the next one.
+                        await Task.Delay(random.Next(1000) + 500);
+                    }
+
+                    await call.RequestStream.CompleteAsync();
+
+                    var summary = await call.ResponseAsync;
+                    Log("Finished trip with {0} points. Passed {1} features. "
+                        + "Travelled {2} meters. It took {3} seconds.", summary.PointCount,
+                        summary.FeatureCount, summary.Distance, summary.ElapsedTime);
+                }
+                
+                Log("Finished RecordRoute");
+            }
+            catch (RpcException ex)
+            {
+                Log("RPC failed", ex);
+                throw;
+            }   
+        }
 
         private void Log(string s, params object[] args)
         {

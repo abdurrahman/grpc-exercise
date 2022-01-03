@@ -50,6 +50,9 @@ namespace GrpcClient
             // Looking for features between 40, -75 and 42, -73.
             client.ListFeatures(400000000, -750000000, 420000000, -730000000).Wait();
 
+            // Record a few randomly selected points from the features file.
+            client.RecordRoute(RouteGuideUtil.LoadFeatures(), 10).Wait();
+
             channel.ShutdownAsync().Wait();
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
