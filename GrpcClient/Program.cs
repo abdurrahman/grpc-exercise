@@ -53,6 +53,9 @@ namespace GrpcClient
             // Record a few randomly selected points from the features file.
             client.RecordRoute(RouteGuideUtil.LoadFeatures(), 10).Wait();
 
+            // Send and receive some notes.
+            client.RouteChat().Wait();
+            
             channel.ShutdownAsync().Wait();
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();

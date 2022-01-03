@@ -125,6 +125,52 @@ namespace GrpcClient
             }   
         }
 
+        public async Task RouteChat()
+        {
+            try
+            {                    
+                Log("*** RouteChat");
+                var requests = new List<RouteNote>
+                {
+                    NewNote("First message", 0, 0),
+                    NewNote("Second message", 0, 1),
+                    NewNote("Third message", 1, 0),
+                    NewNote("Fourth message", 0, 0)
+                };
+
+                using (var call = _client.RouteChat())
+                {
+                    var responseReaderTask = Task.Run(async () =>
+                    {
+                        while (await call.ResponseStream.MoveNext())
+                        {
+                            var note = call.ResponseStream.Current;
+                            Log("Got message \"{0}\" at {1}, {2}", note.Message,
+                                note.Location.Latitude, note.Location.Longitude);
+                        }
+                    });
+
+                    foreach (var request in requests)
+                    {
+                        Log("Sending message \"{0}\" at {1}, {2}", request.Message,
+                            request.Location.Latitude, request.Location.Longitude);
+
+                        await call.RequestStream.WriteAsync(request);
+                    }
+
+                    await call.RequestStream.CompleteAsync();
+                    await responseReaderTask;
+                }
+                
+                Log("Finished RouteChat");
+            }
+            catch (RpcException ex)
+            {
+                Log("RPC failed", ex);
+                throw;
+            }
+        }
+
         private void Log(string s, params object[] args)
         {
             Console.WriteLine(s, args);
@@ -134,5 +180,12 @@ namespace GrpcClient
         {
             Console.WriteLine(s);
         }
+
+        private RouteNote NewNote(string message, int lat, int lon) =>
+            new RouteNote
+            {
+                Message = message,
+                Location = new Point {Latitude = lat, Longitude = lon}
+            };
     }
 }
