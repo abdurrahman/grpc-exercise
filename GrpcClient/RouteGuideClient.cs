@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+using System.Threading.Tasks;
 using Grpc.Core;
 using Routeguide;
 
@@ -44,6 +46,40 @@ namespace GrpcClient
                 throw;
             }
         }
+        
+        /// <summary>
+        /// Server-streaming example. Calls listFeatures with a rectangle of interest. Prints each response feature as it arrives.
+        /// </summary>
+        public async Task ListFeatures(int lowLat, int lowLon, int hiLat, int hiLon)
+        {
+            try
+            {
+                Log("*** ListFeatures: lowLat={0} lowLon={1} hiLat={2} hiLon={3}", lowLat, lowLon, hiLat,
+                    hiLon);
+                var request = new Rectangle
+                {
+                    Lo = new Point { Latitude = lowLat, Longitude = lowLon },
+                    Hi = new Point { Latitude = hiLat, Longitude = hiLon }
+                };
+
+                using var call = _client.ListFeatures(request);
+                var responseStream = call.ResponseStream;
+                var responseLog = new StringBuilder("Result: ");
+
+                while (await responseStream.MoveNext())
+                {
+                    var feature = responseStream.Current;
+                    responseLog.Append(feature);
+                }
+                Log(responseLog.ToString());
+            }
+            catch (RpcException ex)
+            {
+                Log("RPC failed " + ex); 
+                throw;
+            }
+        }
+
 
         private void Log(string s, params object[] args)
         {

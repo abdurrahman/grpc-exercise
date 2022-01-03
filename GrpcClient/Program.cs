@@ -44,6 +44,11 @@ namespace GrpcClient
             
             // Looking for a valid feature
             client.GetFeature(409146138, -746188906);
+            // Feature missing.
+            client.GetFeature(0, 0);
+            
+            // Looking for features between 40, -75 and 42, -73.
+            client.ListFeatures(400000000, -750000000, 420000000, -730000000).Wait();
 
             channel.ShutdownAsync().Wait();
             Console.WriteLine("Press any key to exit...");
