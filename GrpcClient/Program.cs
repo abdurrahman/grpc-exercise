@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Routeguide;
@@ -10,7 +11,7 @@ namespace GrpcClient
     {
         private const string GrpcServerUrl = "https://localhost:5001";
         
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {           
             // Return `true` to allow certificates that are untrusted/invalid
             var httpHandler = new HttpClientHandler
@@ -48,15 +49,15 @@ namespace GrpcClient
             client.GetFeature(0, 0);
             
             // Looking for features between 40, -75 and 42, -73.
-            client.ListFeatures(400000000, -750000000, 420000000, -730000000).Wait();
+            await client.ListFeatures(400000000, -750000000, 420000000, -730000000);
 
             // Record a few randomly selected points from the features file.
-            client.RecordRoute(RouteGuideUtil.LoadFeatures(), 10).Wait();
+            await client.RecordRoute(RouteGuideUtil.LoadFeatures(), 10);
 
             // Send and receive some notes.
-            client.RouteChat().Wait();
-            
-            channel.ShutdownAsync().Wait();
+            await client.RouteChat();
+
+            await channel.ShutdownAsync();
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }

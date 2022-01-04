@@ -128,7 +128,7 @@ namespace GrpcClient
         public async Task RouteChat()
         {
             try
-            {                    
+            {               
                 Log("*** RouteChat");
                 var requests = new List<RouteNote>
                 {
@@ -138,30 +138,28 @@ namespace GrpcClient
                     NewNote("Fourth message", 0, 0)
                 };
 
-                using (var call = _client.RouteChat())
+                using var call = _client.RouteChat();
+                var responseReaderTask = Task.Run(async () =>
                 {
-                    var responseReaderTask = Task.Run(async () =>
+                    while (await call.ResponseStream.MoveNext())
                     {
-                        while (await call.ResponseStream.MoveNext())
-                        {
-                            var note = call.ResponseStream.Current;
-                            Log("Got message \"{0}\" at {1}, {2}", note.Message,
-                                note.Location.Latitude, note.Location.Longitude);
-                        }
-                    });
-
-                    foreach (var request in requests)
-                    {
-                        Log("Sending message \"{0}\" at {1}, {2}", request.Message,
-                            request.Location.Latitude, request.Location.Longitude);
-
-                        await call.RequestStream.WriteAsync(request);
+                        var note = call.ResponseStream.Current;
+                        Log("Got message \"{0}\" at {1}, {2}", note.Message,
+                            note.Location.Latitude, note.Location.Longitude);
                     }
+                });
 
-                    await call.RequestStream.CompleteAsync();
-                    await responseReaderTask;
+                foreach (var request in requests)
+                {
+                    Log("Sending message \"{0}\" at {1}, {2}", request.Message,
+                        request.Location.Latitude, request.Location.Longitude);
+
+                    await call.RequestStream.WriteAsync(request);
                 }
-                
+
+                await call.RequestStream.CompleteAsync();
+                await responseReaderTask;
+
                 Log("Finished RouteChat");
             }
             catch (RpcException ex)
