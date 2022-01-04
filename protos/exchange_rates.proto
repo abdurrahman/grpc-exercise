@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+
+service ExchangeRates {
+  rpc GetExchangeRates (ExchangeRatesRequest) returns (ExchangeRatesResponse);
+}
+
+message ExchangeRatesRequest {
+  
+}
+
+message ExchangeRatesResponse {
+  string currencyCode = 1;
+  int32 unit = 2;
+  string currency = 3;
+  double forexBuying = 4;
+  double forexSelling = 5;
+}
