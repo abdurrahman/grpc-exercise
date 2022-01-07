@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "ExchangeRates.Server": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5168;https://localhost:7168",
+      "dotnetRunMessages": true
+    }
+  }
+}
