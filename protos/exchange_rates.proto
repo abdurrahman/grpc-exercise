@@ -1,12 +1,11 @@
 syntax = "proto3";
 
-
 service ExchangeRates {
   rpc GetExchangeRates (ExchangeRatesRequest) returns (ExchangeRatesResponse);
 }
 
 message ExchangeRatesRequest {
-  
+	string name = 1;
 }
 
 message ExchangeRatesResponse {
