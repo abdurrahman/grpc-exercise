@@ -5,13 +5,11 @@ VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcClient", "GrpcClient\GrpcClient.csproj", "{0BA62E28-5FE2-49D9-8CE2-47BD6CAE42F0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcGreeter", "GrpcGreeter\GrpcGreeter.csproj", "{C5140E5D-BF69-4887-9735-A4D1BE96E724}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteGuide", "RouteGuide\RouteGuide.csproj", "{E3E867DF-F89E-4886-901E-736614376C7A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteGuideServer", "RouteGuideServer\RouteGuideServer.csproj", "{A67C48EF-2C85-46DB-909E-69CC8367E43A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExchangeRates.Server", "src\ExchangeRates.Server\ExchangeRates.Server.csproj", "{6F542BDD-6587-4AFC-90FD-3E22DA785E36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExchangeRates.Server", "src\ExchangeRates.Server\ExchangeRates.Server.csproj", "{6F542BDD-6587-4AFC-90FD-3E22DA785E36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{0BA62E28-5FE2-49D9-8CE2-47BD6CAE42F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BA62E28-5FE2-49D9-8CE2-47BD6CAE42F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BA62E28-5FE2-49D9-8CE2-47BD6CAE42F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C5140E5D-BF69-4887-9735-A4D1BE96E724}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5140E5D-BF69-4887-9735-A4D1BE96E724}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C5140E5D-BF69-4887-9735-A4D1BE96E724}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C5140E5D-BF69-4887-9735-A4D1BE96E724}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E3E867DF-F89E-4886-901E-736614376C7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E3E867DF-F89E-4886-901E-736614376C7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3E867DF-F89E-4886-901E-736614376C7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
