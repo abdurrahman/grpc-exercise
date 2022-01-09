@@ -15,7 +15,7 @@
     </ItemGroup>
     
     <ItemGroup>
-        <Protobuf Include="..\protos\route_guide.proto" Link="Protos\route_guide.proto" />
+        <Protobuf Include="..\..\protos\route_guide.proto" Link="Protos\route_guide.proto" />
     </ItemGroup>
 
     <ItemGroup>

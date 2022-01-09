@@ -15,12 +15,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\protos\greet.proto" GrpcServices="Client">
-            <Link>Protos\greet.proto</Link>
-        </Protobuf>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\RouteGuide\RouteGuide.csproj" />
     </ItemGroup>
 
