@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExchangeRates.Server", "src\ExchangeRates.Server\ExchangeRates.Server.csproj", "{6F542BDD-6587-4AFC-90FD-3E22DA785E36}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{87A9365C-BFBD-4E33-9322-1AA8E242CDA3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcServer", "src\GrpcServer\GrpcServer.csproj", "{6F542BDD-6587-4AFC-90FD-3E22DA785E36}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcClient", "src\GrpcClient\GrpcClient.csproj", "{1EE86408-F8EB-43C2-86B5-A09BA81B0A2B}"
 EndProject
@@ -39,5 +41,11 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {11A02016-55D5-4385-AEE3-CB651474141C}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6F542BDD-6587-4AFC-90FD-3E22DA785E36} = {87A9365C-BFBD-4E33-9322-1AA8E242CDA3}
+		{1EE86408-F8EB-43C2-86B5-A09BA81B0A2B} = {87A9365C-BFBD-4E33-9322-1AA8E242CDA3}
+		{764EE9CB-9ABA-4A03-B549-F93C746AD8CC} = {87A9365C-BFBD-4E33-9322-1AA8E242CDA3}
+		{8740BC08-897D-406C-884C-C46FBD293068} = {87A9365C-BFBD-4E33-9322-1AA8E242CDA3}
 	EndGlobalSection
 EndGlobal
