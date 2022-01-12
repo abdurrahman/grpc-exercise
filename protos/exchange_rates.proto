@@ -5,7 +5,7 @@ service ExchangeRates {
 }
 
 message ExchangeRatesRequest {
-	string name = 1;
+	optional string currencyCode = 1;
 }
 
 message ExchangeRatesResponse {
