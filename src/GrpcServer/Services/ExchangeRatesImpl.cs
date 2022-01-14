@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Grpc.Core;
@@ -24,9 +26,21 @@ namespace GrpcServer.Services
             
             xmlDoc.Load(stream);
 
-            // xmlDoc.DocumentElement.SelectSingleNode("/Tarih_Date/");
+            var response = new ExchangeRatesResponse();
+            var exchangeRateList = xmlDoc.LastChild; // Tarih_Date
+            foreach (XmlNode node in exchangeRateList)
+            {
+                if (node.Attributes["CurrencyCode"].Value == request.CurrencyCode)
+                {
+                    response.Unit = Convert.ToInt32(node.ChildNodes[0]?.InnerText);
+                    response.Currency = node.ChildNodes[2]?.InnerText;
+                    response.CurrencyCode = node.Attributes["CurrencyCode"]?.Value;
+                    response.ForexBuying = Convert.ToDouble(node.ChildNodes[3]?.InnerText);
+                    response.ForexSelling = Convert.ToDouble(node.ChildNodes[4]?.InnerText);
+                }
+            }
 
-            return await base.GetExchangeRates(request, context);
+            return response;
         }
     }
 }
