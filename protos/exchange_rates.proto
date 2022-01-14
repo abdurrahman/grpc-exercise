@@ -9,6 +9,10 @@ message ExchangeRatesRequest {
 }
 
 message ExchangeRatesResponse {
+  repeated ExchangeRate exchangeRate = 1;
+}
+
+message ExchangeRate {
   string currencyCode = 1;
   int32 unit = 2;
   string currency = 3;
