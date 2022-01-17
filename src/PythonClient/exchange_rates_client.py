@@ -6,7 +6,7 @@ import exchange_rates_pb2
 import exchange_rates_pb2_grpc
 
 def get_exchange_rates(stub):
-    result = stub.GetExchangeRates(exchange_rates_pb2.ExchangeRatesRequest(currencyCode = "TRY"))
+    result = stub.GetExchangeRates(exchange_rates_pb2.ExchangeRatesRequest(currencyCode = "USD"))
     print("GetExchangeRates called %s" % (result))
 
 def run():
