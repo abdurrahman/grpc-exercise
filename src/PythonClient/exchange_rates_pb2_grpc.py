@@ -19,12 +19,23 @@ class ExchangeRatesStub(object):
                 request_serializer=exchange__rates__pb2.ExchangeRatesRequest.SerializeToString,
                 response_deserializer=exchange__rates__pb2.ExchangeRatesResponse.FromString,
                 )
+        self.GetExchangeRatesStream = channel.unary_stream(
+                '/ExchangeRates/GetExchangeRatesStream',
+                request_serializer=exchange__rates__pb2.Empty.SerializeToString,
+                response_deserializer=exchange__rates__pb2.ExchangeRate.FromString,
+                )
 
 
 class ExchangeRatesServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetExchangeRates(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetExchangeRatesStream(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_ExchangeRatesServicer_to_server(servicer, server):
                     servicer.GetExchangeRates,
                     request_deserializer=exchange__rates__pb2.ExchangeRatesRequest.FromString,
                     response_serializer=exchange__rates__pb2.ExchangeRatesResponse.SerializeToString,
+            ),
+            'GetExchangeRatesStream': grpc.unary_stream_rpc_method_handler(
+                    servicer.GetExchangeRatesStream,
+                    request_deserializer=exchange__rates__pb2.Empty.FromString,
+                    response_serializer=exchange__rates__pb2.ExchangeRate.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class ExchangeRates(object):
         return grpc.experimental.unary_unary(request, target, '/ExchangeRates/GetExchangeRates',
             exchange__rates__pb2.ExchangeRatesRequest.SerializeToString,
             exchange__rates__pb2.ExchangeRatesResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetExchangeRatesStream(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/ExchangeRates/GetExchangeRatesStream',
+            exchange__rates__pb2.Empty.SerializeToString,
+            exchange__rates__pb2.ExchangeRate.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
