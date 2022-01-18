@@ -2,6 +2,7 @@ syntax = "proto3";
 
 service ExchangeRates {
   rpc GetExchangeRates (ExchangeRatesRequest) returns (ExchangeRatesResponse);
+  rpc GetExchangeRatesStream (Empty) returns (stream ExchangeRate);
 }
 
 message ExchangeRatesRequest {
@@ -19,3 +20,5 @@ message ExchangeRate {
   double forexBuying = 4;
   double forexSelling = 5;
 }
+
+message Empty {}
