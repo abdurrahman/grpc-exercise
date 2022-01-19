@@ -14,6 +14,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.MapGrpcService<ExchangeRatesImpl>();
+app.MapGrpcService<MessageStreamingService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
 
 app.Run();
