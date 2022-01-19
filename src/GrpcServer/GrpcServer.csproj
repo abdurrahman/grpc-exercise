@@ -10,7 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<Protobuf Include="..\..\protos\exchange_rates.proto" Link="Protos\exchange_rates.proto" GrpcServices="Server" />
+    <Protobuf Include="..\..\protos\exchange_rates.proto" Link="Protos\exchange_rates.proto" GrpcServices="Server" />
+    <Protobuf Include="..\..\protos\streamer.proto" Link="Protos\streamer.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>
