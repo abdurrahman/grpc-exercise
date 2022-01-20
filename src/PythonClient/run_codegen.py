@@ -5,5 +5,5 @@ protoc.main((
     '-I../../protos',
     '--python_out=.',
     '--grpc_python_out=.',
-    '../../protos/exchange_rates.proto',
+    '../../protos/streamer.proto',
 ))
