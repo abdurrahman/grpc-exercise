@@ -11,3 +11,9 @@ services:
   bindings:
   - protocol: http
     port: 5168
+
+- name: route-server
+  project: src/RouteGuideServer/RouteGuideServer.csproj
+
+- name: grpc-client
+  project: src/GrpcClient/GrpcClient.csproj
