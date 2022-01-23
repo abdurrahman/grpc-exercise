@@ -2,8 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Grpc.Core;
-using Grpc.Net.Client;
-using Routeguide;
 
 namespace GrpcClient
 {
@@ -38,28 +36,6 @@ namespace GrpcClient
             // Console.ReadKey();
 
             #endregion
-
-            // using var channel = GrpcChannel.ForAddress(GrpcServerUrl, new GrpcChannelOptions{ HttpHandler = httpHandler});
-            var channel = new Channel("127.0.0.1:30052", ChannelCredentials.Insecure);
-            var client = new RouteGuideClient(new RouteGuide.RouteGuideClient(channel));
-            
-            // Looking for a valid feature
-            client.GetFeature(409146138, -746188906);
-            // Feature missing.
-            client.GetFeature(0, 0);
-            
-            // Looking for features between 40, -75 and 42, -73.
-            await client.ListFeatures(400000000, -750000000, 420000000, -730000000);
-
-            // Record a few randomly selected points from the features file.
-            await client.RecordRoute(RouteGuideUtil.LoadFeatures(), 10);
-
-            // Send and receive some notes.
-            await client.RouteChat();
-
-            await channel.ShutdownAsync();
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
         }
     }
 }
